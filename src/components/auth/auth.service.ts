@@ -5,10 +5,11 @@ import { UserService } from "../user/user.service";
 
 export class AuthService {
   private readonly jwtSecret: Secret;
-  private readonly userService: UserService = new UserService();
+  private readonly userService: UserService;
 
   constructor() {
     this.jwtSecret = process.env.JWT_SECRET || "JWT_SECRET";
+    this.userService = new UserService();
   }
 
   async hashPassword(password: string): Promise<string> {

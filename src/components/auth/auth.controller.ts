@@ -4,9 +4,15 @@ import { UserService } from "../user/user.service";
 import EmailService from "../../common/email/email.service";
 
 export class AuthController {
-  private readonly authService = new AuthService();
-  private readonly userService = new UserService();
-  private readonly emailService = new EmailService();
+  private readonly authService: AuthService;
+  private readonly userService: UserService;
+  private readonly emailService: EmailService;
+
+  constructor() {
+    this.authService = new AuthService();
+    this.userService = new UserService();
+    this.emailService = new EmailService();
+  }
 
   async register(req: Request, res: Response) {
     try {
