@@ -1,36 +1,39 @@
-import express, { Request, Response } from 'express';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
+import express, { Request, Response } from "express";
+import swaggerUi from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
 const swaggerDefinition = {
-  openapi: '3.0.0',
+  openapi: "3.0.0",
   info: {
-    title: 'Express TypeScript API',
-    version: '1.0.0',
-    description: 'API documentation for the Express TypeScript application',
+    title: "Express TypeScript API",
+    version: "1.0.0",
+    description: "API documentation for the Express TypeScript application",
   },
   servers: [
     {
       url: `http://localhost:${PORT}`,
-      description: 'Development server',
+      description: "Development server",
     },
   ],
 };
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/**/*.ts'],
+  apis: ["./src/**/*.ts"],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get('/', (_: Request, res: Response) => {
-  res.send('Welcome To ExpressJS Typescript && MongoDB Template!');
+app.get("/", (_: Request, res: Response) => {
+  res.send("Welcome To ExpressJS Typescript && MongoDB Template!");
 });
 
 app.listen(PORT, () => {
