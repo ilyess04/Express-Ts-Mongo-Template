@@ -91,4 +91,35 @@ router.post(
   authController.login.bind(authController)
 );
 
+/**
+ * @swagger
+ * /auth/forgotpassword:
+ *   post:
+ *     summary: Login with email and password
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *             required:
+ *               - email
+ *     responses:
+ *       200:
+ *         description: resetpassword email has been sent successfuly!
+ *       400:
+ *         description: Bad request, validation error
+ *       401:
+ *         description: Unauthorized, invalid credentials
+ */
+router.post(
+  "/forgotpassword",
+  [body("email").isEmail()],
+  authController.forgotPassword.bind(authController)
+);
+
 export default router;

@@ -71,7 +71,7 @@ export class AuthController {
       //   context: context,
       // });
       return res.status(200).send({
-        message: "reset mail has been sent successfuly!",
+        message: "resetpassword email has been sent successfuly!",
       });
     } catch (error) {
       return res.status(500).json({ error });
