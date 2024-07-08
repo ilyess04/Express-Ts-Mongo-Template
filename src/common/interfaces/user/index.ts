@@ -13,4 +13,9 @@ interface IEditUser {
   password?: string;
 }
 
-export type { ICreateUser, IEditUser };
+interface IJwtPayloadUser {
+  userId: string;
+  refresh?: boolean;
+}
+
+export type { ICreateUser, IEditUser, IJwtPayloadUser };

@@ -5,6 +5,46 @@ import { AuthController } from "./auth.controller";
 const router = express.Router();
 const authController = new AuthController();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: Authentication APIs
+ */
+
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstname:
+ *                 type: string
+ *               lastname:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 format: password
+ *             required:
+ *               - firstname
+ *               - lastname
+ *               - email
+ *               - password
+ *     responses:
+ *       200:
+ *         description: Registration successful
+ *       400:
+ *         description: Bad request, validation error
+ */
 router.post(
   "/register",
   [
@@ -16,6 +56,35 @@ router.post(
   authController.register.bind(authController)
 );
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login with email and password
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 format: password
+ *             required:
+ *               - email
+ *               - password
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Bad request, validation error
+ *       401:
+ *         description: Unauthorized, invalid credentials
+ */
 router.post(
   "/login",
   [body("email").isEmail(), body("password").notEmpty()],

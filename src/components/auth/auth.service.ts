@@ -1,11 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt, { Secret } from "jsonwebtoken";
-import { IUserModel } from "../../common/interfaces";
+import { IJwtPayloadUser, IUserModel } from "../../common/interfaces";
 import { UserService } from "../user/user.service";
-
-export interface IJwtPayloadUser {
-  userId: string;
-}
 
 export class AuthService {
   private readonly jwtSecret: Secret;
@@ -33,8 +29,7 @@ export class AuthService {
     accessToken: string;
     refreshToken: string;
   } {
-    const userId = user._id as string;
-    const payload: IJwtPayloadUser = { userId };
+    const payload: IJwtPayloadUser = { userId: user._id as string };
     const accessToken = jwt.sign(payload, this.jwtSecret, {
       expiresIn: process.env.ACCESS_TOKEN_TIMEOUT,
     });
@@ -44,6 +39,14 @@ export class AuthService {
       { expiresIn: process.env.REFRESH_TOKEN_TIMEOUT }
     );
     return { accessToken, refreshToken };
+  }
+
+  async generateResetPasswordToken(user: IUserModel): Promise<string> {
+    const payload: IJwtPayloadUser = { userId: user._id as string };
+    const resetPasswordToken = jwt.sign(payload, this.jwtSecret, {
+      expiresIn: process.env.RESET_PASSWORD_TOKEN_TIMEOUT,
+    });
+    return resetPasswordToken;
   }
 
   async validateUser(

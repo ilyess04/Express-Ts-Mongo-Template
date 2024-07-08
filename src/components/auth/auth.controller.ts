@@ -22,14 +22,14 @@ export class AuthController {
         user,
       });
     } catch (error) {
-      res.status(500).json({ error });
+      return res.status(500).json({ error });
     }
   }
   async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
       const user = await this.userService.getUserByEmail(email);
-      console.log(user)
+      console.log(user);
       const verifPassword = await this.authService.decodePassword(
         user!,
         password
@@ -47,7 +47,34 @@ export class AuthController {
         refreshToken: refreshToken,
       });
     } catch (error) {
-      res.status(500).json({ error });
+      return res.status(500).json({ error });
+    }
+  }
+  async forgotPassword(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      const user = await this.userService.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).send({
+          message: "user unothorized!",
+        });
+      }
+      // const resetPasswordToken =
+      //   await this.authService.generateResetPasswordToken(user);
+      // const context = {
+      //   url: process.env.FRONT_LINK + "/resetpassword/" + resetPasswordToken,
+      // };
+      // this.emailService.sendEmail({
+      //   to: user.email,
+      //   subject: "reset password",
+      //   template: "resetPasswordTemplate",
+      //   context: context,
+      // });
+      return res.status(200).send({
+        message: "reset mail has been sent successfuly!",
+      });
+    } catch (error) {
+      return res.status(500).json({ error });
     }
   }
 }
