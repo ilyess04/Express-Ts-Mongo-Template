@@ -63,7 +63,7 @@ export class AuthController {
       const resetPasswordToken =
         await this.authService.generateResetPasswordToken(user);
       const context = {
-        url: process.env.FRONT_LINK + "/resetpassword/" + resetPasswordToken,
+        url: process.env.FRONTEND_HOST + "/resetpassword/" + resetPasswordToken,
       };
       this.emailService.sendEmail({
         to: user.email,
