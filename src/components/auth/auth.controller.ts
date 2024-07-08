@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
 import { UserService } from "../user/user.service";
+import EmailService from "../../common/email/email.service";
 
 export class AuthController {
   private readonly authService = new AuthService();
   private readonly userService = new UserService();
+  private readonly emailService = new EmailService();
 
   async register(req: Request, res: Response) {
     try {
@@ -29,7 +31,6 @@ export class AuthController {
     try {
       const { email, password } = req.body;
       const user = await this.userService.getUserByEmail(email);
-      console.log(user);
       const verifPassword = await this.authService.decodePassword(
         user!,
         password
@@ -59,17 +60,17 @@ export class AuthController {
           message: "user unothorized!",
         });
       }
-      // const resetPasswordToken =
-      //   await this.authService.generateResetPasswordToken(user);
-      // const context = {
-      //   url: process.env.FRONT_LINK + "/resetpassword/" + resetPasswordToken,
-      // };
-      // this.emailService.sendEmail({
-      //   to: user.email,
-      //   subject: "reset password",
-      //   template: "resetPasswordTemplate",
-      //   context: context,
-      // });
+      const resetPasswordToken =
+        await this.authService.generateResetPasswordToken(user);
+      const context = {
+        url: process.env.FRONT_LINK + "/resetpassword/" + resetPasswordToken,
+      };
+      this.emailService.sendEmail({
+        to: user.email,
+        subject: "reset password",
+        template: "resetPasswordTemplate",
+        context,
+      });
       return res.status(200).send({
         message: "resetpassword email has been sent successfuly!",
       });
