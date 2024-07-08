@@ -1,12 +1,9 @@
 import { Model } from "mongoose";
 import { ICreateUser, IEditUser, IUserModel } from "../../common/interfaces";
+import { User } from "../../common/models";
 
 export class UserService {
-  private userModel: Model<IUserModel>;
-
-  constructor(userModel: Model<IUserModel>) {
-    this.userModel = userModel;
-  }
+  private userModel: Model<IUserModel> = User;
 
   async getUserByEmail(email: string): Promise<IUserModel | null> {
     return await this.userModel

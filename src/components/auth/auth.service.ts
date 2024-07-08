@@ -9,8 +9,9 @@ export interface IJwtPayloadUser {
 
 export class AuthService {
   private readonly jwtSecret: Secret;
+  private readonly userService: UserService = new UserService();
 
-  constructor(private readonly userService: UserService) {
+  constructor() {
     this.jwtSecret = process.env.JWT_SECRET || "JWT_SECRET";
   }
 
@@ -22,10 +23,21 @@ export class AuthService {
     return bcrypt.compare(password, user.password);
   }
 
-  generateToken(user: IUserModel): string {
+  generateToken(user: IUserModel): {
+    accessToken: string;
+    refreshToken: string;
+  } {
     const userId = user._id as string;
     const payload: IJwtPayloadUser = { userId };
-    return jwt.sign(payload, this.jwtSecret, { expiresIn: "1h" });
+    const accessToken = jwt.sign(payload, this.jwtSecret, {
+      expiresIn: process.env.ACCESS_TOKEN_TIMEOUT,
+    });
+    const refreshToken: string = jwt.sign(
+      { ...payload, refresh: true },
+      this.jwtSecret,
+      { expiresIn: process.env.REFRESH_TOKEN_TIMEOUT }
+    );
+    return { accessToken, refreshToken };
   }
 
   async validateUser(

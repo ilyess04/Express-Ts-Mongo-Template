@@ -1,8 +1,9 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import dotenv from "dotenv";
 import databaseConnection from "./common/database/database.connection";
+import appRoutes from "./app.routes";
 
 dotenv.config();
 
@@ -41,9 +42,7 @@ const swaggerSpec = swaggerJSDoc(options);
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get("/", (_: Request, res: Response) => {
-  res.send("Welcome To ExpressJS Typescript && MongoDB Template!");
-});
+app.use("/", appRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
