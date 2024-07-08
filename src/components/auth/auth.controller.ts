@@ -17,9 +17,34 @@ export class AuthController {
         password: hashedPassword,
       });
 
-      res.status(201).json({
+      return res.status(201).json({
         message: "User created successfully!",
         user,
+      });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+  async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const user = await this.userService.getUserByEmail(email);
+      console.log(user)
+      const verifPassword = await this.authService.decodePassword(
+        user!,
+        password
+      );
+      if (!user || !verifPassword) {
+        return res.status(400).json({
+          message: "unothorized",
+        });
+      }
+      const { accessToken, refreshToken } =
+        this.authService.generateToken(user);
+      return res.status(200).json({
+        user: user,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       });
     } catch (error) {
       res.status(500).json({ error });

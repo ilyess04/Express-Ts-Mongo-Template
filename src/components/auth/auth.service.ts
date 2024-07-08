@@ -19,6 +19,12 @@ export class AuthService {
     return bcrypt.hash(password, 10);
   }
 
+  async decodePassword(user: IUserModel, password: string): Promise<boolean> {
+    let match = false;
+    match = user && (await bcrypt.compare(password, user.password));
+    return match;
+  }
+
   async comparePasswords(user: IUserModel, password: string): Promise<boolean> {
     return bcrypt.compare(password, user.password);
   }

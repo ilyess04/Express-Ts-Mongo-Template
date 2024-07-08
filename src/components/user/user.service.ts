@@ -9,8 +9,6 @@ export class UserService {
     return await this.userModel
       .findOne({
         email,
-        isArchived: false,
-        isDeleted: false,
       })
       .exec();
   }

@@ -16,4 +16,10 @@ router.post(
   authController.register.bind(authController)
 );
 
+router.post(
+  "/login",
+  [body("email").isEmail(), body("password").notEmpty()],
+  authController.login.bind(authController)
+);
+
 export default router;
