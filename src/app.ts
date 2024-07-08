@@ -2,8 +2,11 @@ import express, { Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import dotenv from "dotenv";
+import databaseConnection from "./common/database/database.connection";
 
 dotenv.config();
+
+databaseConnection();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
