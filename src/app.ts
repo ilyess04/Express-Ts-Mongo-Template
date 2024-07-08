@@ -20,8 +20,14 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `http://localhost:${PORT}`,
-      description: "Development server",
+      url:
+        process.env.NODE_ENV === "development"
+          ? `http://localhost:${PORT}`
+          : process.env.HOST,
+      description:
+        process.env.NODE_ENV === "development"
+          ? "Development server"
+          : process.env.SWAGGER_DESCRIPTION,
     },
   ],
 };
