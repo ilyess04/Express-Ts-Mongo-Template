@@ -4,11 +4,9 @@ import { IJwtPayloadUser, IUserModel } from "../../common/interfaces";
 import { UserService } from "../user/user.service";
 
 export class AuthService {
-  private readonly jwtSecret: Secret;
   private readonly userService: UserService;
 
   constructor() {
-    this.jwtSecret = process.env.JWT_SECRET || "JWT_SECRET";
     this.userService = new UserService();
   }
 
@@ -31,22 +29,28 @@ export class AuthService {
     refreshToken: string;
   } {
     const payload: IJwtPayloadUser = { userId: user._id as string };
-    const accessToken = jwt.sign(payload, this.jwtSecret, {
+    const accessToken = jwt.sign(payload, process.env.TOKEN_SECRET_KEY!, {
       expiresIn: process.env.ACCESS_TOKEN_TIMEOUT,
     });
     const refreshToken: string = jwt.sign(
       { ...payload, refresh: true },
-      this.jwtSecret,
+      process.env.TOKEN_SECRET_KEY!,
       { expiresIn: process.env.REFRESH_TOKEN_TIMEOUT }
     );
     return { accessToken, refreshToken };
   }
 
   async generateResetPasswordToken(user: IUserModel): Promise<string> {
-    const payload: IJwtPayloadUser = { userId: user._id as string };
-    const resetPasswordToken = jwt.sign(payload, this.jwtSecret, {
-      expiresIn: process.env.RESET_PASSWORD_TOKEN_TIMEOUT,
-    });
+    const payload: IJwtPayloadUser = {
+      userId: user._id as string,
+    };
+    const resetPasswordToken = jwt.sign(
+      payload,
+      process.env.RESET_PASSWORD_SECRET_KEY!,
+      {
+        expiresIn: process.env.RESET_PASSWORD_TOKEN_TIMEOUT,
+      }
+    );
     return resetPasswordToken;
   }
 
@@ -63,10 +67,44 @@ export class AuthService {
 
   async decodeToken(token: string): Promise<IJwtPayloadUser> {
     try {
-      const decoded = jwt.verify(token, this.jwtSecret) as IJwtPayloadUser;
+      const decoded = jwt.verify(
+        token,
+        process.env.TOKEN_SECRET_KEY!
+      ) as IJwtPayloadUser;
       return decoded;
     } catch (error) {
       throw new Error("Invalid token");
     }
+  }
+
+  async decodeResetToken(token: string) {
+    try {
+      const payload = jwt.verify(token, process.env.RESET_PASSWORD_SECRET_KEY!);
+      if (typeof payload === "object" && "userId" in payload) {
+        const user = this.userService.getUserById(payload.userId);
+        if (user !== null) {
+          return payload as IJwtPayloadUser;
+        }
+      }
+    } catch (error) {
+      throw new Error(JSON.stringify(error));
+    }
+  }
+
+  async resetPasswordToken(
+    token: string,
+    password: string
+  ): Promise<IUserModel | null> {
+    const payload = await this.decodeResetToken(token);
+    const user = await this.userService.getUserById(payload!.userId);
+    if (!user) {
+      throw new Error("User not found !");
+    }
+    const hashPassword = await this.hashPassword(password);
+    const updateUser = { ...user, password: hashPassword };
+    return await this.userService.updateUser({
+      ...updateUser,
+      _id: user._id as string,
+    });
   }
 }
