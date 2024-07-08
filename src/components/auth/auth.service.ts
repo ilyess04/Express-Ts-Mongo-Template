@@ -77,11 +77,11 @@ export class AuthService {
     }
   }
 
-  async decodeResetToken(token: string) {
+  async decodeResetToken(token: string): Promise<IJwtPayloadUser | undefined> {
     try {
       const payload = jwt.verify(token, process.env.RESET_PASSWORD_SECRET_KEY!);
       if (typeof payload === "object" && "userId" in payload) {
-        const user = this.userService.getUserById(payload.userId);
+        const user = await this.userService.getUserById(payload.userId);
         if (user !== null) {
           return payload as IJwtPayloadUser;
         }
@@ -101,9 +101,8 @@ export class AuthService {
       throw new Error("User not found !");
     }
     const hashPassword = await this.hashPassword(password);
-    const updateUser = { ...user, password: hashPassword };
     return await this.userService.updateUser({
-      ...updateUser,
+      password: hashPassword,
       _id: user._id as string,
     });
   }

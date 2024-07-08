@@ -142,9 +142,13 @@ router.post(
  *           schema:
  *             type: object
  *             required:
- *               - newPassword
+ *               - password
+ *               - confirmPassword
  *             properties:
- *               newPassword:
+ *              password:
+ *                 type: string
+ *                 format: password
+ *              confirmPassword:
  *                 type: string
  *                 format: password
  *     responses:
@@ -153,9 +157,12 @@ router.post(
  *       400:
  *         description: Bad request
  */
-router.post(
+router.put(
   "/resetpassword/:token",
-  [body("password").isLength({ min: 8 }), body("confirmPassword").isLength({ min: 8 })],
+  [
+    body("password").isLength({ min: 8 }),
+    body("confirmPassword").isLength({ min: 8 }),
+  ],
   authController.resetPassword.bind(authController)
 );
 

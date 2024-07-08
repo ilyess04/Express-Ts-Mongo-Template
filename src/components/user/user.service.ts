@@ -28,7 +28,7 @@ export class UserService {
       .findByIdAndUpdate(
         user._id,
         {
-          $set: { ...user },
+          ...user
         },
         { new: true }
       )

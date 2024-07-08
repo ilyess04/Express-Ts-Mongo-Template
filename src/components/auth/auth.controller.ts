@@ -63,7 +63,7 @@ export class AuthController {
       const user = await this.userService.getUserByEmail(email);
       if (!user) {
         return res.status(401).send({
-          message: "user unothorized!",
+          message: "user unauthorized!",
         });
       }
       const resetPasswordToken =
