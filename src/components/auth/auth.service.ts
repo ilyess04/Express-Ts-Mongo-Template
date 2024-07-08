@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { IJwtPayloadUser, IUserModel } from "../../common/interfaces";
 import { UserService } from "../user/user.service";
 

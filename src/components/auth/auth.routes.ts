@@ -122,4 +122,41 @@ router.post(
   authController.forgotPassword.bind(authController)
 );
 
+/**
+ * @swagger
+ * /auth/resetpassword/{token}:
+ *   post:
+ *     summary: Reset user password
+ *     tags: [Authentication]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Reset password token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Bad request
+ */
+router.post(
+  "/resetpassword/:token",
+  [body("password").isLength({ min: 8 }), body("confirmPassword").isLength({ min: 8 })],
+  authController.resetPassword.bind(authController)
+);
+
 export default router;
