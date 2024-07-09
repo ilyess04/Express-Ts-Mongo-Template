@@ -3,9 +3,12 @@ import { IJwtPayloadUser } from "../interfaces";
 import jwt from "jsonwebtoken";
 import { UserService } from "../../components/user/user.service";
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const userService = new UserService();
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return res.status(401).json({ message: "Authentication token missing" });
@@ -14,7 +17,8 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
       token,
       process.env.TOKEN_SECRET_KEY!
     ) as IJwtPayloadUser;
-    const user = userService.getUserById(userId);
+    const userService = new UserService();
+    const user = await userService.getUserById(userId);
     (req as any).user = user;
     next();
   } catch (error) {
