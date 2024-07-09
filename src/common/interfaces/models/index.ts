@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 interface IUserModel extends Document {
   firstname: string;
@@ -6,4 +6,8 @@ interface IUserModel extends Document {
   email: string;
   password: string;
 }
-export type { IUserModel };
+interface ICompanyModel extends Document {
+  name: string;
+  manager: mongoose.Types.ObjectId;
+}
+export type { IUserModel, ICompanyModel };

@@ -1,2 +1,3 @@
 import User from "./user/user.model";
-export { User };
+import Company from "./company/company.model";
+export { User, Company };
