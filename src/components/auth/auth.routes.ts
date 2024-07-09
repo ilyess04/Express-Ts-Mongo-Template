@@ -95,7 +95,7 @@ router.post(
  * @swagger
  * /auth/forgotpassword:
  *   post:
- *     summary: Login with email and password
+ *     summary: Forgot password with email
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
