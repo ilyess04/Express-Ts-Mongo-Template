@@ -1,6 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import { AuthController } from "./auth.controller";
+import refreshMiddleware from "../../common/middlewares/refresh.middleware";
 
 const router = express.Router();
 const authController = new AuthController();
@@ -125,7 +126,7 @@ router.post(
 /**
  * @swagger
  * /auth/resetpassword/{token}:
- *   post:
+ *   put:
  *     summary: Reset user password
  *     tags: [Authentication]
  *     parameters:
@@ -164,6 +165,27 @@ router.put(
     body("confirmPassword").isLength({ min: 8 }),
   ],
   authController.resetPassword.bind(authController)
+);
+
+/**
+ * @swagger
+ * /auth/refresh:
+ *   get:
+ *     summary: Refresh token
+ *     tags: 
+ *       - Authentication
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.get(
+  "/refresh",
+  refreshMiddleware,
+  authController.refreshToken.bind(authController)
 );
 
 export default router;

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
 import { UserService } from "../user/user.service";
 import EmailService from "../../common/email/email.service";
+import { IJwtRequest } from "../../common/interfaces";
 
 export class AuthController {
   private readonly authService: AuthService;
@@ -98,6 +99,19 @@ export class AuthController {
           message: "passwords not matching!",
         });
       }
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
+  }
+  async refreshToken(req: IJwtRequest | any, res: Response) {
+    try {
+      const user = req.user;
+      const { accessToken, refreshToken } =
+        this.authService.generateToken(user);
+      return res.status(200).json({
+        accessToken,
+        refreshToken,
+      });
     } catch (error) {
       return res.status(500).json({ error });
     }
